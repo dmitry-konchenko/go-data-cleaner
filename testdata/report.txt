@@ -1,6 +1,7 @@
 Data Cleaner Report
 
-Total records: 4
+Total records: 5
+Invalid rows: 1
 Duplicates found: 2
 
 - Duplicate email: ivan@mail.ru

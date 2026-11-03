@@ -16,6 +16,10 @@ func ReadCSV(filePath string) ([][]string, error) {
 
 	reader := csv.NewReader(file)
 
+	// Разрешаем строкам содержать разное количество полей.
+	// Корректность строк проверяем самостоятельно.
+	reader.FieldsPerRecord = -1
+
 	records, err := reader.ReadAll()
 	if err != nil {
 		return nil, err
@@ -66,6 +70,46 @@ func NormalizePhone(phone string) string {
 	return result
 }
 
+func FindDuplicates(records [][]string) []string {
+	seenEmails := make(map[string]bool)
+	seenPhones := make(map[string]bool)
+
+	var duplicates []string
+
+	for i, record := range records {
+		if i == 0 {
+			continue
+		}
+
+		if len(record) < 3 {
+			continue
+		}
+
+		email := record[1]
+		phone := record[2]
+
+		if seenEmails[email] {
+			duplicates = append(
+				duplicates,
+				"Duplicate email: "+email,
+			)
+		} else {
+			seenEmails[email] = true
+		}
+
+		if seenPhones[phone] {
+			duplicates = append(
+				duplicates,
+				"Duplicate phone: "+phone,
+			)
+		} else {
+			seenPhones[phone] = true
+		}
+	}
+
+	return duplicates
+}
+
 func WriteCSV(filePath string, records [][]string) error {
 	file, err := os.Create(filePath)
 	if err != nil {
@@ -79,37 +123,12 @@ func WriteCSV(filePath string, records [][]string) error {
 	return writer.WriteAll(records)
 }
 
-func FindDuplicates(records [][]string) []string {
-	seenEmails := make(map[string]bool)
-	seenPhones := make(map[string]bool)
-
-	var duplicates []string
-
-	for i, record := range records {
-		if i == 0 {
-			continue
-		}
-
-		email := record[1]
-		phone := record[2]
-
-		if seenEmails[email] {
-			duplicates = append(duplicates, "Duplicate email: "+email)
-		} else {
-			seenEmails[email] = true
-		}
-
-		if seenPhones[phone] {
-			duplicates = append(duplicates, "Duplicate phone: "+phone)
-		} else {
-			seenPhones[phone] = true
-		}
-	}
-
-	return duplicates
-}
-
-func WriteReport(filePath string, totalRecords int, duplicates []string) error {
+func WriteReport(
+	filePath string,
+	totalRecords int,
+	invalidRows int,
+	duplicates []string,
+) error {
 	file, err := os.Create(filePath)
 	if err != nil {
 		return err
@@ -118,10 +137,15 @@ func WriteReport(filePath string, totalRecords int, duplicates []string) error {
 
 	_, err = fmt.Fprintf(
 		file,
-		"Data Cleaner Report\n\nTotal records: %d\nDuplicates found: %d\n\n",
+		"Data Cleaner Report\n\n"+
+			"Total records: %d\n"+
+			"Invalid rows: %d\n"+
+			"Duplicates found: %d\n\n",
 		totalRecords,
+		invalidRows,
 		len(duplicates),
 	)
+
 	if err != nil {
 		return err
 	}
