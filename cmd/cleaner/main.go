@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"os"
 
@@ -8,18 +9,37 @@ import (
 )
 
 func main() {
-	if len(os.Args) != 3 {
-		fmt.Println("usage: go-data-cleaner <input.csv> <output.csv>")
+	inputPath := flag.String(
+		"input",
+		"",
+		"path to input CSV file",
+	)
+
+	outputPath := flag.String(
+		"output",
+		"output.csv",
+		"path to cleaned CSV file",
+	)
+
+	reportPath := flag.String(
+		"report",
+		"report.txt",
+		"path to report file",
+	)
+
+	flag.Parse()
+
+	if *inputPath == "" {
+		fmt.Println("input file is required")
+		flag.Usage()
 		os.Exit(1)
 	}
 
-	inputPath := os.Args[1]
-	outputPath := os.Args[2]
+	fmt.Println("Input:", *inputPath)
+	fmt.Println("Output:", *outputPath)
+	fmt.Println("Report:", *reportPath)
 
-	fmt.Println("Input:", inputPath)
-	fmt.Println("Output:", outputPath)
-
-	records, err := cleaner.ReadCSV(inputPath)
+	records, err := cleaner.ReadCSV(*inputPath)
 	if err != nil {
 		fmt.Println("Error reading CSV:", err)
 		os.Exit(1)
@@ -32,7 +52,6 @@ func main() {
 
 	invalidRows := 0
 
-	// В новый массив складываем только корректные строки.
 	cleanedRecords := [][]string{
 		records[0],
 	}
@@ -52,6 +71,12 @@ func main() {
 		record[1] = cleaner.NormalizeEmail(record[1])
 		record[2] = cleaner.NormalizePhone(record[2])
 
+		if !cleaner.IsValidEmail(record[1]) {
+			fmt.Println("Invalid email:", record[1])
+			invalidRows++
+			continue
+		}
+
 		cleanedRecords = append(cleanedRecords, record)
 	}
 
@@ -67,16 +92,14 @@ func main() {
 		fmt.Println("\nNo duplicates found.")
 	}
 
-	err = cleaner.WriteCSV(outputPath, cleanedRecords)
+	err = cleaner.WriteCSV(*outputPath, cleanedRecords)
 	if err != nil {
 		fmt.Println("Error writing CSV:", err)
 		os.Exit(1)
 	}
 
-	reportPath := "testdata/report.txt"
-
 	err = cleaner.WriteReport(
-		reportPath,
+		*reportPath,
 		len(records)-1,
 		invalidRows,
 		duplicates,
@@ -87,6 +110,6 @@ func main() {
 	}
 
 	fmt.Println("\nDone!")
-	fmt.Println("Saved to:", outputPath)
-	fmt.Println("Report saved to:", reportPath)
+	fmt.Println("Saved to:", *outputPath)
+	fmt.Println("Report saved to:", *reportPath)
 }
