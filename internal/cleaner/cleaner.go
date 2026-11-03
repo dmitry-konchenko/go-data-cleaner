@@ -3,6 +3,7 @@ package cleaner
 import (
 	"encoding/csv"
 	"fmt"
+	"net/mail"
 	"os"
 	"strings"
 )
@@ -162,4 +163,15 @@ func WriteReport(
 	}
 
 	return nil
+}
+
+func IsValidEmail(email string) bool {
+	email = NormalizeEmail(email)
+
+	if email == "" {
+		return false
+	}
+
+	_, err := mail.ParseAddress(email)
+	return err == nil
 }

@@ -95,3 +95,29 @@ func TestFindDuplicates(t *testing.T) {
 		)
 	}
 }
+
+func TestIsValidEmail(t *testing.T) {
+	tests := []struct {
+		email    string
+		expected bool
+	}{
+		{"test@example.com", true},
+		{"TEST@EXAMPLE.COM", true},
+		{"invalid-email", false},
+		{"test@", false},
+		{"", false},
+	}
+
+	for _, test := range tests {
+		result := IsValidEmail(test.email)
+
+		if result != test.expected {
+			t.Errorf(
+				"IsValidEmail(%q) = %v; expected %v",
+				test.email,
+				result,
+				test.expected,
+			)
+		}
+	}
+}
