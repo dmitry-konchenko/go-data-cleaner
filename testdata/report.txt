@@ -1,8 +1,0 @@
-Data Cleaner Report
-
-Total records: 5
-Invalid rows: 1
-Duplicates found: 2
-
-- Duplicate email: ivan@mail.ru
-- Duplicate phone: +79991234567
