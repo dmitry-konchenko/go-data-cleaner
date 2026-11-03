@@ -71,7 +71,10 @@ go-data-cleaner/
 ## Run
 
 ```bash
-go run ./cmd/cleaner testdata/input.csv testdata/output.csv
+go run ./cmd/cleaner \
+  -input testdata/input.csv \
+  -output testdata/output.csv \
+  -report testdata/report.txt
 ```
 
 The cleaned file will be saved to:
@@ -85,6 +88,8 @@ The processing report will be saved to:
 ```text
 testdata/report.txt
 ```
+Default output: output.csv
+Default report: report.txt
 
 ## Tests
 
