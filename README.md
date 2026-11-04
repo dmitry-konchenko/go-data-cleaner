@@ -8,11 +8,12 @@ The application reads a CSV file, normalizes user data, detects duplicates, skip
 
 - CSV file reading and writing
 - Name normalization
-- Email normalization
-- Russian phone number normalization
+- Email normalization and validation
+- Russian phone number normalization and validation
 - Duplicate detection by email and phone
 - Invalid row handling
 - Processing report generation
+- CLI flags
 - Unit tests
 
 ## Example
@@ -89,7 +90,7 @@ The processing report will be saved to:
 testdata/report.txt
 ```
 Default output: output.csv
-Default report: report.txt
+Default report: report.txt  
 
 ## Tests
 
