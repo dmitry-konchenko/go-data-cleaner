@@ -121,3 +121,34 @@ func TestIsValidEmail(t *testing.T) {
 		}
 	}
 }
+
+func TestIsValidPhone(t *testing.T) {
+	tests := []struct {
+		phone    string
+		expected bool
+	}{
+		{"89991234567", true},
+		{"+7 999 123-45-67", true},
+		{"8 (999) 888-77-66", true},
+		{"+79995554433", true},
+
+		{"12345", false},
+		{"", false},
+		{"abc", false},
+		{"+7999123456", false},
+		{"+799912345678", false},
+	}
+
+	for _, test := range tests {
+		result := IsValidPhone(test.phone)
+
+		if result != test.expected {
+			t.Errorf(
+				"IsValidPhone(%q) = %v; expected %v",
+				test.phone,
+				result,
+				test.expected,
+			)
+		}
+	}
+}

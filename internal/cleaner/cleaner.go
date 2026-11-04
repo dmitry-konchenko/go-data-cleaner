@@ -175,3 +175,23 @@ func IsValidEmail(email string) bool {
 	_, err := mail.ParseAddress(email)
 	return err == nil
 }
+
+func IsValidPhone(phone string) bool {
+	phone = NormalizePhone(phone)
+
+	if len(phone) != 12 {
+		return false
+	}
+
+	if !strings.HasPrefix(phone, "+7") {
+		return false
+	}
+
+	for _, r := range phone[1:] {
+		if r < '0' || r > '9' {
+			return false
+		}
+	}
+
+	return true
+}

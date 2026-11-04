@@ -77,6 +77,12 @@ func main() {
 			continue
 		}
 
+		if !cleaner.IsValidPhone(record[2]) {
+			fmt.Println("Invalid phone:", record[2])
+			invalidRows++
+			continue
+		}
+
 		cleanedRecords = append(cleanedRecords, record)
 	}
 
